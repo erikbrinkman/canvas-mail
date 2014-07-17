@@ -1,91 +1,111 @@
 <!DOCTYPE html>
-<head>
-  <style>    
-    a { 
-        text-decoration: none;
-        color: black;
-        }
-    a:hover{ 
-             text-decoration: underline;
-             }
-    #webfont-email { 
-                     font: 26pt Tangerine;
-                     }
-    div { 
-          padding: 1em;
-          margin: 1em 0;
-          background-color: #eee8d5;
-          font-size: 14pt;
+<!-- TODO Switch tabs to spaces -->
+<html>
+  <head>
+    <style>
+      body {
+	  margin: 0;
+	  padding: 0;
+      }
+      
+      #webfont-email { 
+	  font: 26pt Tangerine;
+      }
+      
+      a:hover {
+	  font-weight: bold;
+      }
+      
+      ul {
+	  list-style-type: none;
+	  padding: 0;
+	  margin: 0 auto;
+	  max-width: 60em;
+      }
+      
+      li {
+	  padding: 1em;
+	  margin: 1em 0 0 0;
+	  /* TODO Move image into repo and get rights to use? */
+	  background: url("http://sageartsstudio.com/wp/wp-content/uploads/2012/10/Texture_2011_002.jpg");
+	  background-size: 100%;
+	  font-size: 14pt;
+	  box-shadow: 0 0.5em 1em #888;
+      }
+      
+      li:first-child {
+	  margin-top: 0;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <ul>
+      <li>
+	<h3>Normal Email</h3>
+	<a href="mailto:user@domain.com">user@domain.com</a>
+	<p>This is a plain text email with a mailto link. Pretty standard but
+	  it's easily scrapped by spammers.</p>
+      </li>
+      
+      <li>
+	<h3>CanvasMail Email</h3>
+	<span id="norm-email">Email protected with javascript. Enable it to
+	  continue</span>
+	<p>canMail with the email text rendered on canvas. This way the email is
+	  never in the DOM as plain text. The closest the email is to being in
+	  plain text is as a javascript variable in a few function calls. canMail
+	  tries its best to pull relevant font styling from the container its in,
+	  but it won't pull everything yet. In addition, the canvas font
+	  measuring leaves much to be desired and I don't make claims about how
+	  well it works between browsers. Also note, that because its rendered on
+	  canvas, it doesn't scale well as you zoom in on the page.</p>
+      </li>
+      
+      <li>
+	<h3>CanvasMail Linked Email</h3>
+	<a id="link-email">Email protected with javascript. Enable it to
+	  continue</a>
+	<p>You may want the email to have a mailto link so people can copy the
+	  email or just click it. canMail only puts the href attribute in the
+	  link when a mouseover event is handled, and it removes it on mouseoff,
+	  so as to have the email in the DOM as little as possible.</p>
+	<p>This solution is courtesy
+	  of <a href="http://stackoverflow.com/questions/483212/effective-method-to-hide-email-from-spam-bots/10300743#10300743">this</a>
+	  stackoverflow post.</p>
+      </li>
+      
+      <li>
+	<h3>CanvasEmail WebFont Email</h3>
+	<a id="webfont-email">Email protected with javascript. Enable it to
+	  continue</a>
+	<p>This API can handle rendering webfonts, but one has to make sure that
+	  the email isn't rendered until the webfont is loaded. This can be
+	  accomplished with the WebFont loader. See the
+	  <a href="https://developers.google.com/webfonts/docs/webfont_loader">API</a>.</p>
+	<p>Thanks
+	  to <a href="http://creativejs.com/2011/12/day-6-webfonts-canvas/">Creative
+	    JS</a> for pointing out how to do this</p>
+      </li>
+    </ul>
+    
+    <script src="http://code.jquery.com/jquery-git2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
+    <script src="canvas-mail.js"></script>
+    <script>
+      $(function() {
+          CANVAS_MAIL.render_email($("#norm-email"), "user", "domain.com");
+          CANVAS_MAIL.render_email($("#link-email"), "user", "domain.com");
+      });
+      
+      /* WebFont email render must be made after the font is loaded
+         This is accomplished with the WebFont loader. */
+      WebFont.load({
+          google: { families: [ 'Tangerine' ] },
+          active: function() {
+              CANVAS_MAIL.render_email($("#webfont-email"), "user", "domain.com");
           }
-  </style>
-</head>
-<body>
-  <div>
-    <h3>Normal Email</h3>
-    <a href="mailto:user@domain.com">user@domain.com</a>
-    <p>This is a plain text email with a mailto link. Pretty standard
-    but it's easily scrapped by spammers. I made the text black and
-    removed the underline with css</p>
-  </div>
-
-  <div>
-    <h3>canMail Canvas Email</h3>
-    <span id="norm-email">Email protected with
-      javascript. Enable it to continue</span>
-    <p>canMail with the email text rendered on canvas. This way the
-      email is never in the DOM as plain text. The closest the email
-      is to being in plain text is as a javascript variable in a few
-      function calls. canMail tries its best to pull relevant font
-      styling from the container its in, but it won't pull everything
-      yet. In addition, the canvas font measuring leaves much to be
-      desired and I don't make claims about how well it works between
-      browsers. Also note, that because its rendered on canvas, it
-      doesn't scale well as you zoom in on the page.</p>
-  </div>
-
-  <div>
-    <h3>canMail Canvas Email with Link</h3>
-    <span id="link-email">Email protected with
-      javascript. Enable it to continue</span>
-    <p>You may want the email to have a mailto link so people can copy
-      the email or just click it. canMail only puts the href attribute
-      in the link when a mouseover event is handled, and it removes it
-      on mouseoff, so as to have the email in the DOM as little as
-      possible.</p>
-    <p>This solution is courtesy
-    of <a href="http://stackoverflow.com/questions/483212/effective-method-to-hide-email-from-spam-bots/10300743#10300743">this</a>
-    stackoverflow post.</p>
-  </div>
-
-  <div>
-    <h3>canMail Canvas Email with WebFont</h3>
-    <span id="webfont-email">Email protected with
-      javascript. Enable it to continue</span>
-    <p>This API can handle rendering webfonts, but one has to make
-      sure that the email isn't rendered until the webfont is
-      loaded. This can be accomplished with the WebFont loader. See
-      the
-      <a href="https://developers.google.com/webfonts/docs/webfont_loader">API</a>.</p>
-    <p>Thanks to <a href="http://creativejs.com/2011/12/day-6-webfonts-canvas/">Creative JS</a> for pointing out how to do this</p>
-  </div>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
-  <script src="canmail.js"></script>
-  <script>
-    $(function() {
-	$("#norm-email").canMail("user", "domain.com");
-	$("#link-email").canMail("user", "domain.com", true);
-    });
-
-    // WebFont email render must be made after the font is loaded
-    // This is accomplished with the WebFont loader.
-    WebFont.load({
-	google: { families: [ 'Tangerine' ] },
-	active: function() {
-	    $("#webfont-email").canMail("user", "domain.com", true);
-	}
-    });
-  </script>
-</body>
+      });
+    </script>
+  </body>
 </html>
