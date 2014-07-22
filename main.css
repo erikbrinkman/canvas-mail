@@ -1,0 +1,63 @@
+/* This file contains styling to make index.html prettier */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: url("paper.jpg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    margin: 0 auto;
+    max-width: 45em;
+    font-size: 1.2em;
+}
+
+.wrapper {
+    padding: 0 1em 2em 1em;
+    color: #444;
+}
+
+table {
+    margin: 0 auto;
+    padding: 0.3em 0.5em;
+    box-sizing: border-box;
+    border-top: 0.2em solid black;
+    border-bottom: 0.2em solid black;
+    border-spacing: 0;
+}
+
+td {
+    padding: 0.4em;
+    text-align: center;
+}
+
+td p {
+    margin: 0;
+}
+
+tr:first-child td {
+    border-bottom: 0.1em solid black;
+    padding-bottom: 0.7em;
+}
+
+tr:nth-child(2) td {
+    padding-top: 0.7em;
+}
+
+tr:first-child {
+    font-weight: bold;
+}
+
+td:first-child {
+    font-weight: bold;
+}
+
+td:first-child,
+td:nth-child(2) {
+    text-align: left;
+}

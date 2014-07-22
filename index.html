@@ -1,114 +1,201 @@
 <!DOCTYPE html>
 <!-- TODO Switch tabs to spaces -->
-<!-- TODO Change layout to a table with all of the different style I support -->
-<!-- TODO Include disclaimer about underlines -->
-<!-- TODO Include disclaimer about default link styling, and how it needs to be --
-  -- specified -->
 <html>
   <head>
+    <title>CanvasMail</title>
+    <link rel="stylesheet" href="main.css">
     <style>
-      body {
-	  margin: 0;
-	  padding: 0;
-      }
-      
-      #webfont-email { 
-	  font: 26pt Tangerine;
-      }
-
-      a {
+      .norm a {
 	  color: blue;
 	  text-decoration: underline;
       }
       
-      ul {
-	  list-style-type: none;
-	  padding: 0;
-	  margin: 0 auto;
-	  max-width: 60em;
+      .styled a {
+	  font: small-caps italic bold 1.2em sans-serif;
+	  color: red;
       }
       
-      li {
-	  padding: 1em;
-	  margin: 1em 0 0 0;
-	  /* TODO Move image into repo and get rights to use? */
-	  background: url("http://sageartsstudio.com/wp/wp-content/uploads/2012/10/Texture_2011_002.jpg");
-	  background-size: 100%;
-	  font-size: 14pt;
-	  box-shadow: 0 0.5em 1em #888;
+      .strike-through a {
+	  text-decoration: line-through;
       }
       
-      li:first-child {
-	  margin-top: 0;
+      .shadow a {
+	  text-shadow: 0.2em 0.2em 0.2em green;
+      }
+      
+      .transform a {
+	  text-transform: capitalize;
+      }
+      
+      .webfont a {
+	  font: 2em Tangerine;
+      }
+      
+      .pseudo a:hover {
+	  font-style: italic;
       }
     </style>
   </head>
   
   <body>
-    <ul>
-      <li>
-	<h3>Normal Email</h3>
-	<a href="mailto:user@domain.com">user@domain.com</a>
-	<p>This is a plain text email with a mailto link. Pretty standard but
-	  it's easily scrapped by spammers.</p>
-      </li>
-      
-      <li>
-	<h3>CanvasMail Email</h3>
-	<span id="norm-email">Email protected with javascript. Enable it to
-	  continue</span>
-	<p>canMail with the email text rendered on canvas. This way the email is
-	  never in the DOM as plain text. The closest the email is to being in
-	  plain text is as a javascript variable in a few function calls. canMail
-	  tries its best to pull relevant font styling from the container its in,
-	  but it won't pull everything yet. In addition, the canvas font
-	  measuring leaves much to be desired and I don't make claims about how
-	  well it works between browsers. Also note, that because its rendered on
-	  canvas, it doesn't scale well as you zoom in on the page.</p>
-      </li>
-      
-      <li>
-	<h3>CanvasMail Linked Email</h3>
-	<a id="link-email">Email protected with javascript. Enable it to
-	  continue</a>
-	<p>You may want the email to have a mailto link so people can copy the
-	  email or just click it. canMail only puts the href attribute in the
-	  link when a mouseover event is handled, and it removes it on mouseoff,
-	  so as to have the email in the DOM as little as possible.</p>
-	<p>This solution is courtesy
-	  of <a href="http://stackoverflow.com/questions/483212/effective-method-to-hide-email-from-spam-bots/10300743#10300743">this</a>
-	  stackoverflow post.</p>
-      </li>
-      
-      <li>
-	<h3>CanvasEmail WebFont Email</h3>
-	<a id="webfont-email">Email protected with javascript. Enable it to
-	  continue</a>
-	<p>This API can handle rendering webfonts, but one has to make sure that
-	  the email isn't rendered until the webfont is loaded. This can be
-	  accomplished with the WebFont loader. See the
-	  <a href="https://developers.google.com/webfonts/docs/webfont_loader">API</a>.</p>
-	<p>Thanks
-	  to <a href="http://creativejs.com/2011/12/day-6-webfonts-canvas/">Creative
-	    JS</a> for pointing out how to do this</p>
-      </li>
-    </ul>
+    <div class="wrapper">
+      <h1>CanvasMail</h1>
+      <p>CanvasMail attempts to hide emails from web crawlers by rendering the
+	email on a canvas element instead of having them ever exist in the
+	DOM. The steps CanvasMail takes are fairly simple.</p>
     
+      <ol>
+	<li>Capture style from the selected element</li>
+	<li>Create canvas with email, attempting to render style as best as
+	  possible</li>
+	<li>Clear the element, and insert the canvas into it</li>
+	<li>If element is an anchor, insert mouseover javascript that sets href
+	  on mouseover</li>
+      </ol>
+      
+      <h2>Notes</h2>
+      
+      <ol>
+	<li>Because the email is rendered on a canvas, it doesn't scale well
+	  then the screen is zoomed.</li>
+	<li>Some text styling is mimicked, not natively supported, so the
+	  appearance doesn't always match css styled text (see below).</li>
+	<li>Because the href element is only set on mouseover, CanvasMail links
+	  can't be navigated to via tabbing.</li>
+	<li>The email will exist in contiguous memory on the client side at
+	  various points of computation, and for links, will exist in the DOM
+	  during mouseover</li>
+      </ol>
+
+      <h2>Examples</h2>
+      
+      <p>The following table contains some example of how well CanvasMail
+	handles different environments.</p>
+
+      <table>
+	<tr>
+	  <td>Style</td>
+	  <td>Notes</td>
+	  <td>Standard Email</td>
+	  <td>CanvasMail</td>
+	</tr>
+	
+	<tr>
+	  <td>Plain Text</td>
+	  <td><p>Plain or colored text is rendered fine by CanvasMail.</p></td>
+	  <td>user@domain.com</td>
+	  <td><span class="canvas-mail">Email protected with javascript. Enable
+	      it to continue.</span></td>
+	</tr>
+	
+	<tr>
+	  <td>Default Link</td>
+	  <td><p>jQuery can't detect "default" link style, so the link color and
+	      underline needs to be set / normalized or it won't get
+	      mimicked.</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="canvas-mail">Email protected with javascript. Enable it
+	      to continue</a></td>
+	</tr>
+	
+	<tr class="norm">
+	  <td>Normalized Link</td>
+	  <td><p>Canvas elements don't support underlining text, so the underline
+	      has to be done manually making it different than the standard font
+	      renderer.</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="canvas-mail">Email protected with javascript. Enable it
+	      to continue.</a></td>
+	</tr>
+	
+	<tr class="norm styled">
+	  <td>Font Styled</td>
+	  <td><p>All font modifications are supported by canvas, and so
+	      any addition font styling will be transferred to the
+	      canvas.</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="canvas-mail">Email protected with javascript. Enable it
+	      to continue.</a></td>
+	</tr>
+	
+	<tr class="norm transform">
+	  <td>Transform</td>
+	  <td><p>Text transform capitalize has to be slightly mimicked. The
+	      results might not match css, but it should be close (and east to
+	      modify).</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="canvas-mail">Email protected with
+	      javascript. Enable it to continue.</a></td>
+	</tr>
+	
+	<tr class="norm shadow">
+	  <td>Shadow</td>
+	  <td><p>Shadows exist for canvas, but the appearance didn't seem to
+	      match how css was displaying them, and the extra math to account
+	      for the offset made this harder to support fully. Sorry.</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="canvas-mail">Email protected with
+	      javascript. Enable it to continue.</a></td>
+	</tr>
+	
+	<tr class="norm">
+	  <td>Email Parameters</td>
+	  <td><p>Email parameters like subject, body, cc, and bcc can also be
+	      included. cc and bcc are obscured slightly.</p></td>
+	  <td><a href="mailto:user@domain.com?cc=user1@one.org,usera@aaa.edu&bcc=shhhh@peekaboo.net&subject=This%20is%20the%20subject!&body=This%20is%20a%20short%20body...">user@domain.com</a></td>
+	  <td><a class="param-canvas-mail">Email protected with
+	      javascript. Enable it to continue</a></td>
+	</tr>
+	
+	<tr class="norm pseudo">
+	  <td>Pseudo Selector</td>
+	  <td><p>CanvasMail does it's best to monitor pseudo-selectors and
+	      regenerate the canvas (hover over the links).</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="canvas-mail">Email protected with
+	      javascript. Enable it to continue</a></td>
+	</tr>
+	
+	<tr class="norm webfont">
+	  <td>WebFont</td>
+	  <td><p>Webfonts work too, but the call to canvas mail needs to be made
+	      after the font is loaded, otherwise CanvasMail will pick up the
+	      computed fallback font.</p></td>
+	  <td><a href="mailto:user@domain.com">user@domain.com</a></td>
+	  <td><a class="webfont-canvas-mail">Email protected with
+	      javascript. Enable it to continue</a></td>
+	</tr>
+      </table>
+
+      <h2>Acknowledgements</h2>
+
+      <p>The paper texture is courtesy
+      of <a href="http://www.bashcorpo.dk/">bashcorpo.dk</a>.</p>
+      
     <script src="http://code.jquery.com/jquery-git2.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
     <script src="canvas-mail.js"></script>
     <script>
       $(function() {
-          CANVAS_MAIL.render_email($("#norm-email"), "user", "domain.com");
-          CANVAS_MAIL.render_email($("#link-email"), "user", "domain.com");
+	  // This renders most of the emails
+	  CANVAS_MAIL.render_email($(".canvas-mail"), "user", "domain.com");
+	  // This renders an email with extra mailto information
+	  CANVAS_MAIL.render_email($(".param-canvas-mail"), "user", "domain.com", {
+	      subject: "This is the subject!",
+	      body: "This is a short body...",
+	      cc_users: ["user1", "usera"],
+	      cc_domains: ["one.org", "aaa.edu"],
+	      bcc_users: ["shhhh"],
+	      bcc_domains: ["peekaboo.net"]
+	  });
       });
       
       /* WebFont email render must be made after the font is loaded
-         This is accomplished with the WebFont loader. */
+	 This is accomplished with the WebFont loader. */
       WebFont.load({
-          google: { families: [ 'Tangerine' ] },
-          active: function() {
-              CANVAS_MAIL.render_email($("#webfont-email"), "user", "domain.com");
+	  google: { families: [ 'Tangerine' ] },
+	  active: function() {
+	      CANVAS_MAIL.render_email($(".webfont-canvas-mail"), "user", "domain.com");
           }
       });
     </script>
