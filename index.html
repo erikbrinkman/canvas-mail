@@ -41,30 +41,24 @@
       <h1>Canvas Mail</h1>
       <p>Canvas Mail attempts to hide emails from web crawlers by rendering the
 	email on a canvas element instead of having them ever exist in the
-	DOM. The steps Canvas Mail takes are fairly simple.</p>
-    
-      <ol>
-	<li>Capture style from the selected element</li>
-	<li>Create canvas with email, attempting to render style as best as
-	  possible</li>
-	<li>Clear the element, and insert the canvas into it</li>
-	<li>If element is an anchor, insert mouseover javascript that sets href
-	  on mouseover</li>
-      </ol>
-      
-      <h2>Notes</h2>
-      
-      <ol>
-	<li>Because the email is rendered on a canvas, it doesn't scale well
-	  then the screen is zoomed.</li>
-	<li>Some text styling is mimicked, not natively supported, so the
-	  appearance doesn't always match css styled text (see below).</li>
-	<li>Because the href element is only set on mouseover, Canvas Mail
-	  links can't be navigated to via tabbing.</li>
-	<li>The email will exist in contiguous memory on the client side at
-	  various points of computation, and for links, will exist in the DOM
-	  during mouseover</li>
-      </ol>
+	DOM.</p>
+
+      <p>Canvas Mail is a jQuery plugin. Just
+        call <span class="code">canvas_mail(username, domain)</span> on the
+        jQuery selector of the elements you want to render the email in. If any
+        of the selected
+        elements are an anchor, then canvas mail will also add a mouseover event to
+        create a mailto link only on mouseover. You can optionally
+        add a third argument that's an object with optional
+        fields <span class="code">subject</span>, <span class="code">body</span>,
+        <span class="code">cc_users</span>, <span class="code">cc_domains</span>,
+        <span class="code">bcc_users</span>, <span class="code">bcc_domains</span>
+        for various fields in the mailto,
+        e.g. <span class="code">canvas_mail(username, domain, {subject:
+        "subject"})</span>. In addition, the
+        function <span class="code">link_mail</span> can be called instead to
+        only generate the mouseover link, without rendering the canvas. This
+        page contains examples of all of the possible invocations.</p>
 
       <h2>Examples</h2>
       
@@ -165,7 +159,42 @@
 	  <td><a class="webfont-canvas-mail">Email protected with
 	      javascript. Enable it to continue</a></td>
 	</tr>
+
+	<tr class="norm">
+	  <td>Link Only</td>
+	  <td><p>Canvas mail can also be used to make links without rendering
+	      the email on a canvas. Just
+	      use <span class="code">link-mail</span> instead of
+	      <span class="code">canvas-mail</span>.</p></td>
+	  <td><a href="mailto:user@domain.com">No Email</a></td>
+	  <td><a class="link-mail">No Email</a></td>
+	</tr>
       </table>
+
+      <h2>How Canvas Mail Works</h2>
+    
+      <ol>
+	<li>Capture style from the selected element</li>
+	<li>Create canvas with email, attempting to render style as best as
+	  possible</li>
+	<li>Clear the element, and insert the canvas into it</li>
+	<li>If element is an anchor, insert mouseover javascript that sets href
+	  on mouseover</li>
+      </ol>
+      
+      <h2>Notes</h2>
+      
+      <ol>
+	<li>Because the email is rendered on a canvas, it doesn't scale well
+	  then the screen is zoomed.</li>
+	<li>Some text styling is mimicked, not natively supported, so the
+	  appearance doesn't always match css styled text (see below).</li>
+	<li>Because the href element is only set on mouseover, Canvas Mail
+	  links can't be navigated to via tabbing.</li>
+	<li>The email will exist in contiguous memory on the client side at
+	  various points of computation, and for links, will exist in the DOM
+	  during mouseover</li>
+      </ol>
 
       <h2>Acknowledgements</h2>
 
@@ -174,13 +203,13 @@
       
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
-    <script src="canvas-mail.js"></script>
+    <script src="canvas-mail.min.js"></script>
     <script>
       $(function() {
 	  // This renders most of the emails
-	  CANVAS_MAIL.render_email($(".canvas-mail"), "user", "domain.com");
-	  // This renders an email with extra mailto information
-	  CANVAS_MAIL.render_email($(".param-canvas-mail"), "user", "domain.com", {
+          $(".canvas-mail").canvas_mail("user", "domain.com");
+          // This renders an email with extra mailto information
+	  $(".param-canvas-mail").canvas_mail("user", "domain.com", {
 	      subject: "This is the subject!",
 	      body: "This is a short body...",
 	      cc_users: ["user1", "usera"],
@@ -188,6 +217,8 @@
 	      bcc_users: ["shhhh"],
 	      bcc_domains: ["peekaboo.net"]
 	  });
+          // This only renders a link
+          $(".link-mail").link_mail("user", "domain.com");
       });
       
       /* WebFont email render must be made after the font is loaded
@@ -195,7 +226,7 @@
       WebFont.load({
 	  google: { families: [ 'Tangerine' ] },
 	  active: function() {
-	      CANVAS_MAIL.render_email($(".webfont-canvas-mail"), "user", "domain.com");
+	      $(".webfont-canvas-mail").canvas_mail("user", "domain.com");
           }
       });
     </script>
